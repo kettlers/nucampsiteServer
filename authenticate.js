@@ -11,13 +11,13 @@ exports.local = passport.use(new LocalStrategy(User.authenticate()))
 passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
-exports.getToken = user => {
-    return jwt.sign(user, config.secretKey, { expiresIn: 3600 })
-}
+exports.getToken = function (user) {
+    return jwt.sign(user, config.secretKey, { expiresIn: 3600 });
+};
 
-const opts = {}
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
-opts.secretOrKey = config.secretKey
+const opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = config.secretKey;
 
 exports.jwtPassport = passport.use(
     new JwtStrategy(
@@ -35,6 +35,18 @@ exports.jwtPassport = passport.use(
             });
         }
     )
-)
+);
 
-exports.verifyUser = passport.authenticate('jwt', { session: false })
+exports.verifyUser = passport.authenticate('jwt', { session: false });
+
+exports.verifyAdmin = (req, res, next) => {
+    if (req.user.admin) {
+        console.log("admin verified")
+        return next() //proceed to the next middleware
+    } else {
+        console.log("admin NOT verified")
+        const err = new Error('You are not authorized to perform this operation!')
+        res.status = 403
+        return next(err)
+    }
+}

@@ -10,7 +10,7 @@ promotionRouter.route('/')
             .then(promotions => res.status(200).json(promotions))
             .catch(err => next(err))
     })
-    .post(authenticate.verifyUser, (req, res, next) => {
+    .post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         Promotion.create(req.body)
             .then(promotion => res.status(200).json(promotion))
             .catch(err => next(err))
@@ -18,7 +18,7 @@ promotionRouter.route('/')
     .put(authenticate.verifyUser, (req, res, next) => {
         res.status(403).send('403: Forbidden')
     })
-    .delete(authenticate.verifyUser, (req, res, next) => {
+    .delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         Promotion.deleteMany()
             .then(promotions => res.status(200).json(promotions))
             .catch(err => next(err))
@@ -33,14 +33,14 @@ promotionRouter.route('/:promotionId')
     .post(authenticate.verifyUser, (req, res, next) => {
         res.status(403).send('403: Forbidden')
     })
-    .put(authenticate.verifyUser, (req, res, next) => {
+    .put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         Promotion.findByIdAndUpdate(req.params.promotionId, {
             $set: req.body
         }, { new: true })
             .then(promotion => res.status(200).json(promotion))
             .catch(err => next(err))
     })
-    .delete(authenticate.verifyUser, (req, res, next) => {
+    .delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         Promotion.findByIdAndDelete(req.params.promotionId)
             .then(promotion => res.status(200).json(promotion))
             .catch(err => next(error))
