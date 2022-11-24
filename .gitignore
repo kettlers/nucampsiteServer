@@ -1,2 +1,4 @@
 node_modules
 github.txt
+bin/server.key
+bin/server.cert
